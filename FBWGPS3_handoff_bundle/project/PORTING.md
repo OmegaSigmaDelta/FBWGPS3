@@ -158,6 +158,16 @@ Extended `tests/test_physics_world.cpp` with dedicated vertical-wall and ceiling
 Expanded `tests/test_physics_world.cpp` to cover crossing the seam between adjacent floor fixtures and vertical sliding while a character remains blocked by a wall. The tests assert that a character can traverse a joined floor without catching on the shared edge, and that horizontal collision does not cancel gravity-driven downward motion. Release build passes 19/19 CTest tests and `tests/check_spec.py` reports `ALL OK`. This remains fallback-physics regression coverage; the solver is still an AABB approximation and the PS3 build is not yet available.
 
 
+### PS3 feasibility gate and pad conversion layer (step 1.33)
+
+**Toolchain gate result (2026-10-31, cloud Linux workspace): BLOCKED.** No PS3 cross-compiler or SDK is present (`PS3DEV`/`PSL1GHT` unset, no `powerpc64-ps3-elf-gcc`). It also cannot be obtained there: `ps3toolchain` downloads its sources from gnu.org/sourceware, which the workspace network refuses, and PSL1GHT on GitHub returned HTTP 403. Docker registries are unreachable too. A PS3 binary must therefore be built on a machine with a working ps3toolchain/PSL1GHT install (the user's Windows PC would need WSL/Docker/MSYS2 for it) — no PS3 build exists and none was attempted past this gate.
+
+Baseline rebuilt on GNU 13.3.0: Release build OK, CTest passed, `tests/check_spec.py` = ALL OK.
+
+Added `src/ps3_pad.hpp`: converts a raw PS3 pad sample (digital1/digital2 bytes + 0..255 left-stick axes) into `fw::PadState` for the existing `fw::Input` layer; a disconnected pad yields a neutral state. `tests/test_ps3_pad.cpp` (CTest `ps3_pad_conversion`) covers the bit mapping, axis scaling, two-pad play, single-pad L1 character toggle, stick hysteresis, START/Cross/Circle menu events. **Caveat:** the digital bit constants were written from memory without the SDK headers; the tests prove the conversion logic, not that the constants match PSL1GHT. Check them against `io/pad.h` on the first real toolchain build. The pad glue itself (`ioPadInit`, `ioPadGetInfo2`, `ioPadGetData`) is not written.
+
+Validation: 20/20 CTest cases pass, `tests/check_spec.py` = ALL OK. Neither shows that a PS3 build exists or runs.
+
 ### Progress estimate (2026-10-31)
 
 These are engineering estimates, not measured completion metrics. They separate the desktop remake from the requested PS3 port:

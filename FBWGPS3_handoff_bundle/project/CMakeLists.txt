@@ -20,6 +20,9 @@ endif()
 add_executable(test_input tests/test_input.cpp)
 target_include_directories(test_input PRIVATE src)
 
+add_executable(test_ps3_pad tests/test_ps3_pad.cpp)
+target_include_directories(test_ps3_pad PRIVATE src)
+
 add_executable(test_level tests/test_level.cpp)
 target_link_libraries(test_level PRIVATE fbw_core)
 
@@ -68,6 +71,7 @@ target_link_libraries(test_game_world PRIVATE fbw_core)
 
 enable_testing()
 add_test(NAME input_layer COMMAND test_input)
+add_test(NAME ps3_pad_conversion COMMAND test_ps3_pad)
 add_test(NAME all_level_maps COMMAND test_level "${CMAKE_SOURCE_DIR}/game")
 add_test(NAME all_texture_atlases COMMAND test_atlas "${CMAKE_SOURCE_DIR}/game")
 add_test(NAME bitmap_font_parser COMMAND test_bitmap_font)

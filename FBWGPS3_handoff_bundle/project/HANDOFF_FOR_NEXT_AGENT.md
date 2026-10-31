@@ -30,7 +30,15 @@ This is an **early interactive Linux desktop prototype and a PS3 porting base, n
 - SDL2/Box2D development headers were not available in the recorded environment; runtime SDL2 support is linked through a minimal ABI header. There is no Box2D world adapter.
 - No PS3 `ioPad`, RSX renderer, audio, save-data adapter, PSL1GHT toolchain validation, package generation or hardware test is available yet.
 
-## Recorded validation
+## Update after the second session (2026-10-31)
+
+- Baseline rebuilt from scratch and re-verified; one new component added, so the suite is now **20/20 CTest** (was 19/19) plus `check_spec.py` = ALL OK.
+- **PS3 toolchain gate (step 7) was checked: BLOCKED in the cloud workspace** — no PS3 SDK installed and its sources are unreachable from there (details in `PORTING.md` step 1.33). A PS3 build needs a machine with ps3toolchain + PSL1GHT. Do not promise or claim a PS3 build until one is produced.
+- New: `src/ps3_pad.hpp` + `tests/test_ps3_pad.cpp` (raw PS3 pad sample -> `fw::PadState`). Its bit constants are unverified against the real SDK headers.
+- Still not done: physics parity, mechanism audit, audio, menus on PS3, RSX renderer, save-data adapter, packaging, any on-target test.
+- GitHub: this session's push access to the repository was refused (the Claude GitHub App is not installed for it), so these changes exist only in the session's local clone, not on GitHub.
+
+## Recorded validation (first snapshot)
 
 Snapshot logs say:
 
