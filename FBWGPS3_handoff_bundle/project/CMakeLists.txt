@@ -26,6 +26,9 @@ target_include_directories(test_ps3_pad PRIVATE src)
 add_executable(test_level tests/test_level.cpp)
 target_link_libraries(test_level PRIVATE fbw_core)
 
+add_executable(test_mechanism_inventory tests/test_mechanism_inventory.cpp)
+target_link_libraries(test_mechanism_inventory PRIVATE fbw_core)
+
 add_executable(dump_ground tests/dump_ground.cpp)
 target_link_libraries(dump_ground PRIVATE fbw_core)
 
@@ -73,6 +76,7 @@ enable_testing()
 add_test(NAME input_layer COMMAND test_input)
 add_test(NAME ps3_pad_conversion COMMAND test_ps3_pad)
 add_test(NAME all_level_maps COMMAND test_level "${CMAKE_SOURCE_DIR}/game")
+add_test(NAME mechanism_inventory COMMAND test_mechanism_inventory "${CMAKE_SOURCE_DIR}/game")
 add_test(NAME all_texture_atlases COMMAND test_atlas "${CMAKE_SOURCE_DIR}/game")
 add_test(NAME bitmap_font_parser COMMAND test_bitmap_font)
 add_test(NAME engine_neutral_render_queue COMMAND test_render_queue "${CMAKE_SOURCE_DIR}/game")

@@ -69,7 +69,7 @@ This is an early interactive desktop prototype, not a finished PS3 port. The sta
 
 The interactive runtime also has a first-pass mechanism simulation: pushable boxes use gravity and horizontal pushing, grouped platforms move when linked levers or pressure pushers activate, wind regions apply lift when enabled by a group, and frozen-water contact changes the character's ice movement/animation state. These are approximations, not yet equivalent to the original Box2D joints and device state machine.
 
-The runtime's current interactive object coverage includes approximate collision for boxes/balls, static hanging/pulley platforms and Roman beams, grouped lever/pusher platform activation, animated liquid surfaces/doors/wind effects, and collectible removal. Several device types are still approximations (notably rotating/hanging physics), and sound playback is not implemented.
+The runtime's current interactive object coverage includes approximate collision for the 14 boxes (the 12 balls are drawn but not simulated — see `docs/MECHANISM_AUDIT.md`), static hanging/pulley platforms and Roman beams, grouped lever/pusher platform activation, animated liquid surfaces/doors/wind effects, and collectible removal. Several device types are still approximations (notably rotating/hanging physics), and sound playback is not implemented.
 
 A desktop runtime smoke-test capture is available at [`docs/runtime_movement_smoke.png`](docs/runtime_movement_smoke.png). It verifies that the SDL2 window draws the Forest Temple scene and responds to directional input in the test environment.
 

@@ -132,7 +132,7 @@ The SDL2 prototype now draws the level's object queue per frame instead of bakin
 
 The fallback collision solver now resolves overlap along the minimum separating axis (including convex polygon edge normals), which improves slope contact versus axis-only rollback. Regression coverage includes flat-platform landing, jump/landing, a sloped fixture and non-solid unfrozen liquid.
 
-The latest runtime pass also adds approximate collision fixtures for the 14 movable box/ball objects and the hanging/pulley platforms and Roman balance beams. Balls currently use an AABB approximation, hanging/pulley platforms are static, and wind-effect sprites animate when their group is active. This closes several common traversal gaps but is not a substitute for the original joint-based simulation.
+The latest runtime pass also adds approximate collision fixtures for the 14 movable boxes (correction, 2026-10-31: the 12 balls have no body or collision; see `docs/MECHANISM_AUDIT.md`) and the hanging/pulley platforms and Roman balance beams. Balls currently use an AABB approximation, hanging/pulley platforms are static, and wind-effect sprites animate when their group is active. This closes several common traversal gaps but is not a substitute for the original joint-based simulation.
 
 ### Controller usability pass (step 1.29)
 
@@ -167,6 +167,10 @@ Baseline rebuilt on GNU 13.3.0: Release build OK, CTest passed, `tests/check_spe
 Added `src/ps3_pad.hpp`: converts a raw PS3 pad sample (digital1/digital2 bytes + 0..255 left-stick axes) into `fw::PadState` for the existing `fw::Input` layer; a disconnected pad yields a neutral state. `tests/test_ps3_pad.cpp` (CTest `ps3_pad_conversion`) covers the bit mapping, axis scaling, two-pad play, single-pad L1 character toggle, stick hysteresis, START/Cross/Circle menu events. **Caveat:** the digital bit constants were written from memory without the SDK headers; the tests prove the conversion logic, not that the constants match PSL1GHT. Check them against `io/pad.h` on the first real toolchain build. The pad glue itself (`ioPadInit`, `ioPadGetInfo2`, `ioPadGetData`) is not written.
 
 Validation: 20/20 CTest cases pass, `tests/check_spec.py` = ALL OK. Neither shows that a PS3 build exists or runs.
+
+### Mechanism audit (step 1.34)
+
+`docs/MECHANISM_AUDIT.md` inventories all 261 devices by type and compares each with the port. New CTest `mechanism_inventory` (`tests/test_mechanism_inventory.cpp`) fixes the per-type counts. Main findings: balls (12, in 7 levels) are not simulated; the 12 rotating platforms (5 levels) are translated instead of swung; levers ignore `onis`/`startPos` and toggle on touch; hanging/pulley/Roman devices are static; seven tileset device classes are never used by these maps. These are code-versus-source differences, not results of playing the levels. 21/21 CTest cases pass and `tests/check_spec.py` = ALL OK.
 
 ### Progress estimate (2026-10-31)
 
