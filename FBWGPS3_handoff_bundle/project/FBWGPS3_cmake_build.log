@@ -1,0 +1,20 @@
+[  6%] Built target test_input
+[ 15%] Built target fbw_core
+[ 21%] Built target test_atlas
+[ 27%] Built target test_bitmap_font
+[ 33%] Built target test_render_queue
+[ 39%] Built target test_world_render
+[ 45%] Built target test_character_animation
+[ 51%] Built target test_character_controller
+[ 57%] Built target test_progression
+[ 60%] Building CXX object CMakeFiles/test_progression_catalog.dir/tests/test_progression_catalog.cpp.o
+[ 63%] Building CXX object CMakeFiles/test_menu_navigation.dir/tests/test_menu_navigation.cpp.o
+[ 66%] Linking CXX executable test_menu_navigation
+[ 66%] Built target test_menu_navigation
+[ 72%] Built target fbw_software_renderer
+[ 78%] Built target test_level
+[ 84%] Built target dump_ground
+[ 90%] Built target render_level_preview
+[ 96%] Built target test_software_renderer
+[100%] Linking CXX executable test_progression_catalog
+[100%] Built target test_progression_catalog

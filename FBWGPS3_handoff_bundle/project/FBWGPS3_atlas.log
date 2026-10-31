@@ -1,0 +1,9 @@
+OK: assets/atlasses/CharAssets.json image=CharAssets.png size=2048x2048 frames=239
+OK: assets/atlasses/GroundAssets.json image=GroundAssets.png size=1024x2048 frames=343
+OK: assets/atlasses/MechAssets.json image=MechAssets.png size=2048x2048 frames=163
+OK: assets/atlasses/MenuAssets.json image=MenuAssets.png size=1024x1024 frames=60
+OK: assets/atlasses/MenuBackgrounds.json image=MenuBackgrounds.png size=1024x1024 frames=5
+OK: assets/atlasses/PopupAssets.json image=PopupAssets.png size=2048x2048 frames=111
+OK: assets/atlasses/PreloaderAssets.json image=PreloaderAssets.png size=512x128 frames=3
+OK: assets/atlasses/Temples/forest/TempleAssets.json image=TempleAssets.png size=1024x2048 frames=60
+PASS: 8 atlases, 984 frames validated

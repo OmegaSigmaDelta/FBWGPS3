@@ -1,0 +1,22 @@
+ok  jumpImpulse: init.js=1.0 spec=1.0
+ok  jumpVelocity: init.js=15.5 spec=15.5
+ok  jumpIceVelocity: init.js=10.0 spec=10.0
+ok  runForce: init.js=50.0 spec=50.0
+ok  floatForce: init.js=30.0 spec=30.0
+ok  defaultMaxSpeed: init.js=8.5 spec=8.5
+ok  waterIceMaxSpeed: init.js=2.0 spec=2.0
+ok  absoluteMaxSpeed: init.js=40.0 spec=40.0
+ok  feetFriction: init.js=0.5 spec=0.5
+ok  spriteScale: init.js=0.95 spec=0.95
+ok  r1: init.js=0.48 spec=0.48
+ok  r2: init.js=0.2 spec=0.2
+ok  dr: init.js=0.03 spec=0.03
+ok  y1: init.js=0.2 spec=0.2
+ok  y2: init.js=-0.9 spec=-0.9
+ok  char cat/mask 16/4353
+ok  hull density 1.4
+ok  portal sensor r=0.1
+ok  portal sensor filter 4096/4096/-1
+ok  bullet body
+ok  fixed rotation
+ALL OK

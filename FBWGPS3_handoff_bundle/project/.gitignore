@@ -1,0 +1,10 @@
+/build/
+/build-*/
+*.o
+*.exe
+*.elf
+*.self
+*.pkg
+
+# Local gameplay progress
+fbw_progress.json

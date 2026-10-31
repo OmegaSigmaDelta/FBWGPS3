@@ -1,0 +1,9 @@
+FBWGPS3 build snapshot
+Platform: Linux x86-64
+Build type: CMake Release
+Language: C++17
+Runtime prototype: SDL2 + libpng (desktop only)
+Validation: 19/19 CTest tests passed; tests/check_spec.py = ALL OK
+Latest verified snapshot: 2026-10-31
+Overall estimated remake-to-PS3 completion: 35% (engineering estimate; not a measured metric)
+PS3 target build: NOT AVAILABLE / NOT VERIFIED
