@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fireboy &amp; Watergirl: Forest Temple (offline)</title>
+    <!--
+      Personal offline copy. No network access is required: every asset is loaded
+      relative to this folder (assets/, data/, game.json, js/).
+      Original game: "Fireboy and Watergirl in the Forest Temple" by Oslo Albet / Agame.
+      All rights belong to the original authors; do not redistribute.
+
+      NOTE: browsers block XHR/JSON over file://, serve the folder locally, e.g.
+          python -m http.server 8000     ->  http://localhost:8000
+    -->
+</head>
+<body style="margin: 0px; background: #000">
+<script type="text/javascript">
+    // The bundled Node-style `require` must not clash with RequireJS.
+    window.requireNode = window.require;
+    window.require = undefined;
+</script>
+<script data-main="js/init" src="js/require.js"></script>
+<div id="root">
+    <div id="container"></div>
+    <div id="hammer"></div>
+    <div id="debug-fps" style="color:#ff0000; position: absolute; top: 0;"></div>
+</div>
+</body>
+</html>
