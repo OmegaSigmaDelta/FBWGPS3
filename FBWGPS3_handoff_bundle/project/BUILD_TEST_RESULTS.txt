@@ -2,50 +2,52 @@ Snapshot 2026-10-31 (second session), GNU 13.3.0 Release, Linux x86-64
 Internal ctest changing into directory: /home/claude/fbwgps3/FBWGPS3_handoff_bundle/project/build
 Test project /home/claude/fbwgps3/FBWGPS3_handoff_bundle/project/build
       Start  1: input_layer
- 1/21 Test  #1: input_layer ......................   Passed    0.00 sec
+ 1/22 Test  #1: input_layer ......................   Passed    0.00 sec
       Start  2: ps3_pad_conversion
- 2/21 Test  #2: ps3_pad_conversion ...............   Passed    0.00 sec
+ 2/22 Test  #2: ps3_pad_conversion ...............   Passed    0.00 sec
       Start  3: all_level_maps
- 3/21 Test  #3: all_level_maps ...................   Passed    0.01 sec
+ 3/22 Test  #3: all_level_maps ...................   Passed    0.01 sec
       Start  4: mechanism_inventory
- 4/21 Test  #4: mechanism_inventory ..............   Passed    0.01 sec
+ 4/22 Test  #4: mechanism_inventory ..............   Passed    0.01 sec
       Start  5: all_texture_atlases
- 5/21 Test  #5: all_texture_atlases ..............   Passed    0.01 sec
+ 5/22 Test  #5: all_texture_atlases ..............   Passed    0.01 sec
       Start  6: bitmap_font_parser
- 6/21 Test  #6: bitmap_font_parser ...............   Passed    0.00 sec
+ 6/22 Test  #6: bitmap_font_parser ...............   Passed    0.00 sec
       Start  7: engine_neutral_render_queue
- 7/21 Test  #7: engine_neutral_render_queue ......   Passed    0.02 sec
+ 7/22 Test  #7: engine_neutral_render_queue ......   Passed    0.02 sec
       Start  8: world_object_render_plan
- 8/21 Test  #8: world_object_render_plan .........   Passed    0.02 sec
+ 8/22 Test  #8: world_object_render_plan .........   Passed    0.02 sec
       Start  9: character_animation
- 9/21 Test  #9: character_animation ..............   Passed    0.00 sec
+ 9/22 Test  #9: character_animation ..............   Passed    0.00 sec
       Start 10: character_controller
-10/21 Test #10: character_controller .............   Passed    0.00 sec
+10/22 Test #10: character_controller .............   Passed    0.00 sec
       Start 11: progression_rules
-11/21 Test #11: progression_rules ................   Passed    0.00 sec
+11/22 Test #11: progression_rules ................   Passed    0.00 sec
       Start 12: progression_catalog_and_save
-12/21 Test #12: progression_catalog_and_save .....   Passed    0.01 sec
+12/22 Test #12: progression_catalog_and_save .....   Passed    0.01 sec
       Start 13: menu_focus_navigation
-13/21 Test #13: menu_focus_navigation ............   Passed    0.00 sec
+13/22 Test #13: menu_focus_navigation ............   Passed    0.00 sec
       Start 14: gameplay_contact_rules
-14/21 Test #14: gameplay_contact_rules ...........   Passed    0.00 sec
+14/22 Test #14: gameplay_contact_rules ...........   Passed    0.00 sec
       Start 15: level_session_integration
-15/21 Test #15: level_session_integration ........   Passed    0.01 sec
+15/22 Test #15: level_session_integration ........   Passed    0.01 sec
       Start 16: fallback_physics_world
-16/21 Test #16: fallback_physics_world ...........   Passed    0.00 sec
+16/22 Test #16: fallback_physics_world ...........   Passed    0.00 sec
       Start 17: integrated_game_world
-17/21 Test #17: integrated_game_world ............   Passed    0.01 sec
-      Start 18: software_renderer_pixels
-18/21 Test #18: software_renderer_pixels .........   Passed    0.00 sec
-      Start 19: software_render_preview
-19/21 Test #19: software_render_preview ..........   Passed    0.17 sec
-      Start 20: desktop_runtime_startup
-20/21 Test #20: desktop_runtime_startup ..........   Passed    0.20 sec
-      Start 21: desktop_runtime_all_levels
-21/21 Test #21: desktop_runtime_all_levels .......   Passed    0.69 sec
+17/22 Test #17: integrated_game_world ............   Passed    0.01 sec
+      Start 18: rolling_balls
+18/22 Test #18: rolling_balls ....................   Passed    1.60 sec
+      Start 19: software_renderer_pixels
+19/22 Test #19: software_renderer_pixels .........   Passed    0.00 sec
+      Start 20: software_render_preview
+20/22 Test #20: software_render_preview ..........   Passed    0.15 sec
+      Start 21: desktop_runtime_startup
+21/22 Test #21: desktop_runtime_startup ..........   Passed    0.19 sec
+      Start 22: desktop_runtime_all_levels
+22/22 Test #22: desktop_runtime_all_levels .......   Passed    0.60 sec
 
-100% tests passed, 0 tests failed out of 21
+100% tests passed, 0 tests failed out of 22
 
-Total Test time (real) =   1.19 sec
+Total Test time (real) =   2.67 sec
 
 tests/check_spec.py: ALL OK

@@ -270,7 +270,7 @@ int main(int argc, char** argv) {
 			SDL_Rect dst{0,0,SCREEN_W,SCREEN_H}; SDL_RenderCopy(renderer,assets.level_texture,&src,&dst);
 			fw::Level visual_level=world.session().level();
 			for(const auto& platform:world.platforms()) for(auto& object:visual_level.objects) if(object.id==platform.id&&object.type=="platform") { object.x=platform.x; object.y=platform.y; }
-			for(const auto& box:world.movableObjects()) for(auto& object:visual_level.objects) if(object.id==box.id&&object.type==box.type) { object.x=box.body.x-32.0; object.y=box.body.y+32.0; }
+			for(const auto& box:world.movableObjects()) for(auto& object:visual_level.objects) if(object.id==box.id&&object.type==box.type) { if(box.type=="ball") { object.x=box.body.x-fbw::kBallSpawnDx; object.y=box.body.y-fbw::kBallSpawnDy; object.rotation=box.angle_deg; } else { object.x=box.body.x-32.0; object.y=box.body.y+32.0; } }
 			visual_level.chars.erase(std::remove_if(visual_level.chars.begin(),visual_level.chars.end(),[&](const fw::MapObject& object){ if(object.type!="diamond") return false; for(const auto& diamond:world.session().gameplay().diamonds()) if(diamond.map_object_id==object.id&&diamond.collected) return true; return false; }),visual_level.chars.end());
 			fbw::RenderQueue object_queue; fbw::WorldRenderStats object_stats;
 			if(fbw::appendWorldObjects(visual_level,assets.chars,assets.mech,assets.temple,object_queue,&object_stats,nullptr)) {

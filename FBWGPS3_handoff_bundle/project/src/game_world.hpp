@@ -27,7 +27,13 @@ struct GameWorldStep {
 };
 
 struct PlatformRuntime { int id=0,group=0; double x=0,y=0,w=0,h=0,start_x=0,start_y=0,end_x=0,end_y=0; };
-struct BoxRuntime { int id=0; std::string type="box"; PhysicsBody body; };
+// A pushable dynamic object: a box (AABB) or a ball (circle, `type == "ball"`). `angle_deg` is the visual roll angle.
+struct BoxRuntime { int id=0; std::string type="box"; PhysicsBody body; double angle_deg=0.0; };
+
+// Ball constants from the original Ball device (init.js): circle radius 0.4 m at 32 px/m, and the spawn offset
+// (x + 16, y - 11.2) from the Tiled tile object that the render plan already uses for the ball sprite.
+constexpr double kBallRadiusPx = 12.8;
+constexpr double kBallSpawnDx = 16.0, kBallSpawnDy = -11.2;
 
 class GameWorld {
 public:
@@ -62,6 +68,11 @@ public:
 				BoxRuntime box; box.id=object.id; box.body.id="box_"+std::to_string(object.id);
 				box.body.x=object.x+32.0; box.body.y=object.y-32.0; box.body.half_width=24.0; box.body.half_height=24.0;
 				boxes_.push_back(box);
+			} else if (object.type == "ball") {
+				BoxRuntime ball; ball.id=object.id; ball.type="ball"; ball.body.id="ball_"+std::to_string(object.id);
+				ball.body.x=object.x+kBallSpawnDx; ball.body.y=object.y+kBallSpawnDy;
+				ball.body.radius=ball.body.half_width=ball.body.half_height=kBallRadiusPx;
+				boxes_.push_back(ball);
 			}
 		}
 		updatePlatformPositions(0.0);
@@ -112,6 +123,11 @@ public:
 	const PhysicsBody* body(const std::string& id) const {
 		auto it = bodies_.find(id);
 		return it == bodies_.end() ? nullptr : &it->second;
+	}
+	// Debug/test helper: place a character body at a position with zero velocity. Returns false for an unknown id.
+	bool teleportBody(const std::string& id,double x,double y) {
+		PhysicsBody* body=findBody(id); if(!body) return false;
+		body->x=x; body->y=y; body->vx=body->vy=0.0; body->grounded=false; return true;
 	}
 	const LevelSession& session() const { return session_; }
 	LevelSession& session() { return session_; }
@@ -171,31 +187,55 @@ private:
 			else { x+=p.h*0.5-16.0; y+=p.w*0.5-p.h*0.5; w=32.0; }
 			auto f=makeFixture({{x,y},{x+w,y},{x+w,y+h},{x,y+h}}); collision.push_back(std::move(f));
 		}
-		if(include_boxes) for(const BoxRuntime& b:boxes_) { const auto& body=b.body; auto f=makeFixture({{body.x-body.half_width,body.y-body.half_height},{body.x+body.half_width,body.y-body.half_height},{body.x+body.half_width,body.y+body.half_height},{body.x-body.half_width,body.y+body.half_height}}); collision.push_back(std::move(f)); }
+		if(include_boxes) for(const BoxRuntime& b:boxes_) collision.push_back(fixtureFor(b));
 		physics_.setTerrain(collision);
+	}
+
+	// Collision shape other bodies see for a pushable object. A ball becomes a regular 12-gon whose edges are tangent
+	// to the circle (flats at top, bottom and both sides), so a character can stand on it without sinking in.
+	static fw::GroundFixture fixtureFor(const BoxRuntime& b) {
+		const PhysicsBody& body=b.body;
+		if(body.radius<=0.0) return makeFixture({{body.x-body.half_width,body.y-body.half_height},{body.x+body.half_width,body.y-body.half_height},{body.x+body.half_width,body.y+body.half_height},{body.x-body.half_width,body.y+body.half_height}});
+		constexpr int sides=12; const double pi=std::acos(-1.0), circumradius=body.radius/std::cos(pi/sides);
+		fw::GroundFixture fixture; fixture.v.reserve(sides);
+		for(int i=0;i<sides;++i) { const double a=(i+0.5)*2.0*pi/sides; fixture.v.push_back({body.x+circumradius*std::cos(a),body.y+circumradius*std::sin(a)}); }
+		return fixture;
 	}
 
 	void rebuildCollisionExceptBox(int excluded_id) {
 		std::vector<fw::GroundFixture> collision=base_terrain_;
 		for(const PlatformRuntime& p:platforms_) { double x=p.x,y=p.y,w=p.w,h=p.h; if(w>=h) { y+=h*0.5-32.0; h=32.0; } else { x+=p.h*0.5-16.0; y+=p.w*0.5-p.h*0.5; w=32.0; } auto f=makeFixture({{x,y},{x+w,y},{x+w,y+h},{x,y+h}}); collision.push_back(std::move(f)); }
-		for(const BoxRuntime& b:boxes_) if(b.id!=excluded_id) { const auto& body=b.body; auto f=makeFixture({{body.x-body.half_width,body.y-body.half_height},{body.x+body.half_width,body.y-body.half_height},{body.x+body.half_width,body.y+body.half_height},{body.x-body.half_width,body.y+body.half_height}}); collision.push_back(std::move(f)); }
+		for(const BoxRuntime& b:boxes_) if(b.id!=excluded_id) collision.push_back(fixtureFor(b));
 		physics_.setTerrain(collision);
 	}
 
 	void updateBoxes(const GameWorldInput& input,double dt) {
 		for(BoxRuntime& box:boxes_) {
 			rebuildCollisionExceptBox(box.id);
+			const bool ball=box.type=="ball";
 			PhysicsInput push;
 			for(const auto& entry:bodies_) {
 				const PhysicsBody& player=entry.second;
 				const PhysicsInput& keys=entry.first=="fb"?input.fireboy:input.watergirl;
 				if(std::abs(player.y+player.collision_offset_y-box.body.y)<player.half_height+box.body.half_height &&
 					std::abs(player.x-box.body.x)<player.half_width+box.body.half_width+5.0) {
-					if(keys.left!=keys.right) { if(keys.left) push.left=true; else push.right=true; }
+					if(keys.left!=keys.right) {
+						// A ball is only pushed away from the character that is pressing towards it.
+						if(ball && ((keys.right && player.x>box.body.x) || (keys.left && player.x<box.body.x))) continue;
+						if(keys.left) push.left=true; else push.right=true;
+					}
 				}
 			}
 			PhysicsTuning tuning; tuning.gravity=1000.0; tuning.run_acceleration=1100.0; tuning.air_acceleration=200.0; tuning.max_speed=150.0; tuning.jump_speed=0.0; tuning.horizontal_drag=10.0;
+			if(ball) {
+				// Rolling ball: no drag and no speed cap (Box2D default damping is zero); a character can only push it
+				// up to a walking pace, so the push is dropped once the ball is already rolling that fast that way.
+				constexpr double max_push_speed=200.0;
+				if((push.right && box.body.vx>=max_push_speed) || (push.left && box.body.vx<=-max_push_speed)) push=PhysicsInput{};
+				tuning.run_acceleration=900.0; tuning.air_acceleration=0.0; tuning.max_speed=1000.0; tuning.horizontal_drag=0.0;
+			}
 			physics_.step(box.body,push,dt,tuning);
+			if(ball) box.angle_deg+=box.body.vx*std::min(dt,0.05)/box.body.radius*(180.0/std::acos(-1.0));
 		}
 	}
 

@@ -20,6 +20,11 @@ struct PhysicsBody {
 	double vx = 0.0, vy = 0.0; // pixels/second
 	double half_width = 12.0, half_height = 25.0;
 	double collision_offset_y = 0.0;
+	// > 0 makes the body a circle of this radius (centre x,y) instead of an AABB. A circle models a rolling ball:
+	// contacts remove only the velocity component into the surface, so tangential speed is kept, and while
+	// resting on a surface gravity is scaled by 2/3 (solid disc rolling without slipping). half_width/half_height
+	// should be set to the radius so code that only reads the box extents still sees a sensible size.
+	double radius = 0.0;
 	bool grounded = false;
 	bool alive = true;
 };
@@ -66,7 +71,9 @@ public:
 			body.vy = -tuning.jump_speed;
 			body.grounded = false;
 		}
-		body.vy = std::min(body.vy + tuning.gravity * dt, 1200.0);
+		const bool circle = body.radius > 0.0;
+		const double gravity = (circle && body.grounded) ? tuning.gravity * (2.0 / 3.0) : tuning.gravity;
+		body.vy = std::min(body.vy + gravity * dt, 1200.0);
 
 		// Substeps prevent fast movement from tunnelling through thin terrain.
 		const double distance = std::max(std::abs(body.vx * dt), std::abs(body.vy * dt));
@@ -78,16 +85,29 @@ public:
 			body.x += sx;
 			double nx=0.0,ny=0.0;
 			if (resolveTerrain(body,nx,ny)) {
-				if (std::abs(nx)>0.65) { body.vx=0.0; result.hit_wall=true; }
-				if (ny < -0.45) { body.grounded=true; result.landed=true; }
+				if (circle) {
+					removeIntoSurface(body,nx,ny);
+					if (std::abs(nx)>0.65) result.hit_wall=true;
+					if (ny < -0.45) { body.grounded=true; result.landed=true; }
+				} else {
+					if (std::abs(nx)>0.65) { body.vx=0.0; result.hit_wall=true; }
+					if (ny < -0.45) { body.grounded=true; result.landed=true; }
+				}
 			}
 			body.y += sy;
 			nx=0.0; ny=0.0;
 			if (resolveTerrain(body,nx,ny)) {
-				if (sy>0.0 && ny < -0.25) { body.grounded=true; result.landed=true; }
-				else if (sy<0.0 && ny>0.25) result.hit_ceiling=true;
-				if (std::abs(nx)>0.65) result.hit_wall=true;
-				body.vy=0.0;
+				if (circle) {
+					removeIntoSurface(body,nx,ny);
+					if (ny < -0.45) { body.grounded=true; result.landed=true; }
+					else if (sy<0.0 && ny>0.25) result.hit_ceiling=true;
+					if (std::abs(nx)>0.65) result.hit_wall=true;
+				} else {
+					if (sy>0.0 && ny < -0.25) { body.grounded=true; result.landed=true; }
+					else if (sy<0.0 && ny>0.25) result.hit_ceiling=true;
+					if (std::abs(nx)>0.65) result.hit_wall=true;
+					body.vy=0.0;
+				}
 			}
 		}
 		return result;
@@ -107,6 +127,12 @@ public:
 private:
 	std::vector<fw::GroundFixture> terrain_;
 
+	// Inelastic contact for circles: drop the velocity component pointing into the surface, keep the tangential part.
+	static void removeIntoSurface(PhysicsBody& body, double nx, double ny) {
+		const double into = body.vx * nx + body.vy * ny;
+		if (into < 0.0) { body.vx -= into * nx; body.vy -= into * ny; }
+	}
+
 	bool resolveTerrain(PhysicsBody& body, double& out_nx, double& out_ny) const {
 		bool collided=false;
 		for(int pass=0;pass<4;++pass) {
@@ -115,13 +141,21 @@ private:
 				if(fixture.v.size()<3 || (fixture.liquid_type!=0&&fixture.liquid_type!=55)) continue;
 				std::vector<std::pair<double,double>> points; points.reserve(fixture.v.size());
 				for(const fw::Pt& p:fixture.v) points.emplace_back(p.x,p.y);
-				std::vector<std::pair<double,double>> axes{{1.0,0.0},{0.0,1.0}};
+				const bool circle=body.radius>0.0;
+				std::vector<std::pair<double,double>> axes;
+				if(!circle) axes={{1.0,0.0},{0.0,1.0}};
 				for(size_t i=0;i<points.size();++i) { const auto& a=points[i]; const auto& b=points[(i+1)%points.size()]; const double dx=b.first-a.first,dy=b.second-a.second,len=std::hypot(dx,dy); if(len>1e-9) axes.emplace_back(-dy/len,dx/len); }
+				if(circle) {
+					// Circle vs convex polygon: edge normals plus the axis through the vertex nearest the centre.
+					const double cx=body.x,cy=body.y+body.collision_offset_y; double nearest=std::numeric_limits<double>::infinity(),vx=0.0,vy=0.0;
+					for(const auto& p:points) { const double d=std::hypot(cx-p.first,cy-p.second); if(d<nearest) { nearest=d; vx=cx-p.first; vy=cy-p.second; } }
+					if(nearest>1e-9) axes.emplace_back(vx/nearest,vy/nearest);
+				}
 				double fixture_best=std::numeric_limits<double>::infinity(), fixture_nx=0.0,fixture_ny=0.0;
 				for(const auto& axis:axes) {
 					const double ax=axis.first,ay=axis.second; double minp=std::numeric_limits<double>::infinity(),maxp=-std::numeric_limits<double>::infinity();
 					for(const auto& p:points) { const double v=p.first*ax+p.second*ay; minp=std::min(minp,v); maxp=std::max(maxp,v); }
-					const double center=body.x*ax+(body.y+body.collision_offset_y)*ay, radius=std::abs(ax)*body.half_width+std::abs(ay)*body.half_height;
+					const double center=body.x*ax+(body.y+body.collision_offset_y)*ay, radius=circle?body.radius:std::abs(ax)*body.half_width+std::abs(ay)*body.half_height;
 					const double overlap=std::min(maxp,center+radius)-std::max(minp,center-radius);
 					if(overlap<=0.0) { fixture_best=std::numeric_limits<double>::infinity(); break; }
 					if(overlap<fixture_best) { fixture_best=overlap; const double poly_center=(minp+maxp)*0.5; const double sign=center<poly_center?-1.0:1.0; fixture_nx=ax*sign; fixture_ny=ay*sign; }

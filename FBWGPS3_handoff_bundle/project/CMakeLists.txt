@@ -72,6 +72,9 @@ target_include_directories(test_physics_world PRIVATE src)
 add_executable(test_game_world tests/test_game_world.cpp)
 target_link_libraries(test_game_world PRIVATE fbw_core)
 
+add_executable(test_ball_physics tests/test_ball_physics.cpp)
+target_link_libraries(test_ball_physics PRIVATE fbw_core)
+
 enable_testing()
 add_test(NAME input_layer COMMAND test_input)
 add_test(NAME ps3_pad_conversion COMMAND test_ps3_pad)
@@ -91,6 +94,7 @@ add_test(NAME gameplay_contact_rules COMMAND test_gameplay_runtime "${CMAKE_SOUR
 add_test(NAME level_session_integration COMMAND test_level_session "${CMAKE_SOURCE_DIR}/game")
 add_test(NAME fallback_physics_world COMMAND test_physics_world)
 add_test(NAME integrated_game_world COMMAND test_game_world "${CMAKE_SOURCE_DIR}/game")
+add_test(NAME rolling_balls COMMAND test_ball_physics "${CMAKE_SOURCE_DIR}/game")
 
 find_package(PNG QUIET)
 if(PNG_FOUND)
