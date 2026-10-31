@@ -40,6 +40,14 @@ This is an **early interactive Linux desktop prototype and a PS3 porting base, n
 - Still not done: physics parity, mechanism audit, audio, menus on PS3, RSX renderer, save-data adapter, packaging, any on-target test.
 - GitHub: this session's push access to the repository was refused (the Claude GitHub App is not installed for it), so these changes exist only in the session's local clone, not on GitHub.
 
+## Update after the third session (2026-10-31)
+
+- New platform-neutral pieces, tested on Linux: `src/frame_composer.hpp` (CPU rendering of a full frame), `src/app.hpp` (menu/play/pause/result state machine on `fw::Input`), tests `test_frame_composer` and `test_app_flow` (registered in CMake as `frame_composer_all_levels`, `app_flow_pads`; 24 tests expected once cmake is available).
+- New PS3 glue, **never compiled**: `ps3/ps3_main.cpp`, `ps3/Makefile`. See `PORTING.md` steps 1.36-1.38. First job on a machine with ps3toolchain + PSL1GHT: build, fix the `VERIFY` spots, run in RPCS3.
+- Still missing for PS3: audio, real BMFont text (use `assets/fonts/font.fnt` from the repo root), speed measurement on Cell, PKG, any on-target test, physics/mechanism parity (see mechanism audit).
+- The extra `FBWGPS3_working_base.zip` supplied in the same session is an older/other line of the project (19 tests, no `ps3_pad.hpp`, no ball physics); this session continued from the handoff bundle in the repository.
+- GitHub: this session cannot push (no network, no credentials). Changes are delivered as a zip of changed/new files to copy over the repository.
+
 ## Recorded validation (first snapshot)
 
 Snapshot logs say:

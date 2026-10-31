@@ -31,6 +31,10 @@ class SoftwareRenderer {
 public:
 	bool render(const RenderQueue& queue, const std::map<std::string, ImageRGBA>& atlases,
 		int width, int height, ImageRGBA& output, std::string* error = nullptr) const;
+	// Draws a queue onto an existing image without clearing it. Commands are translated by
+	// (-offset_x, -offset_y), so a world-space queue can be drawn into a camera-sized frame.
+	bool drawQueueOnto(const RenderQueue& queue, const std::map<std::string, ImageRGBA>& atlases,
+		ImageRGBA& target, double offset_x, double offset_y, std::string* error = nullptr) const;
 	bool renderTexturedLevel(const RenderQueue& queue,
 		const std::map<std::string, ImageRGBA>& atlases,
 		const TextureRegion& background, const TextureRegion& foreground,

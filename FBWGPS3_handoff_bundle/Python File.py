@@ -7,7 +7,7 @@ from pathlib import Path
 
 # Change USER if your Windows username differs.
 SOURCE_DIR = Path(
-	r"C:\Users\USER\Desktop\Новая папка\chatgpt3\FBWGPS3_handoff_bundle"
+	r"C:\Users\USER\Desktop\Новая папка\Dump\FBWGPS3-main\FBWGPS3_handoff_bundle"
 )
 
 REPO_URL = "https://github.com/OmegaSigmaDelta/FBWGPS3.git"

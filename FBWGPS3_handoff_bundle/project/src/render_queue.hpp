@@ -230,6 +230,12 @@ public:
 		return result;
 	}
 
+	// Appends an already-built command (used to filter/re-route commands made elsewhere).
+	void push(RenderCommand command) {
+		command.sequence = next_sequence_++;
+		commands_.push_back(std::move(command));
+	}
+
 	void clear() {
 		commands_.clear();
 		next_sequence_ = 0;

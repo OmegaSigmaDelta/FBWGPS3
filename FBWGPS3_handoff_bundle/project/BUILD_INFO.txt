@@ -7,3 +7,5 @@ Validation: 19/19 CTest tests passed; tests/check_spec.py = ALL OK
 Latest verified snapshot: 2026-10-31
 Overall estimated remake-to-PS3 completion: 35% (engineering estimate; not a measured metric)
 PS3 target build: NOT AVAILABLE / NOT VERIFIED
+
+Update: added CPU frame composer, App state machine and unverified PSL1GHT glue (ps3/). PS3 target build: STILL NOT BUILT / NOT VERIFIED.

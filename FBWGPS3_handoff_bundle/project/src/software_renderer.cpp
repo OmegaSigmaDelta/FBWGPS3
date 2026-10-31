@@ -191,6 +191,23 @@ bool SoftwareRenderer::render(const RenderQueue& queue,
 }
 
 
+bool SoftwareRenderer::drawQueueOnto(const RenderQueue& queue,
+	const std::map<std::string, ImageRGBA>& atlases, ImageRGBA& target,
+	double offset_x, double offset_y, std::string* error) const {
+	if (target.width <= 0 || target.height <= 0 ||
+		target.pixels.size() != static_cast<size_t>(target.width) * target.height * 4)
+		return fail(error, "draw target is not a valid RGBA image");
+	for (RenderCommand command : queue.ordered()) {
+		const auto atlas = atlases.find(command.atlas_key);
+		if (atlas == atlases.end()) return fail(error, "no decoded atlas registered for key: " + command.atlas_key);
+		command.x -= offset_x; command.y -= offset_y;
+		command.pivot_x -= offset_x; command.pivot_y -= offset_y;
+		drawCommand(command, atlas->second, target);
+	}
+	if (error) error->clear();
+	return true;
+}
+
 bool SoftwareRenderer::renderTexturedLevel(const RenderQueue& queue,
 	const std::map<std::string, ImageRGBA>& atlases,
 	const TextureRegion& background, const TextureRegion& foreground,

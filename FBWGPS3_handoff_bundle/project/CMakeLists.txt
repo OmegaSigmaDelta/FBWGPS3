@@ -114,6 +114,14 @@ if(PNG_FOUND)
 	add_test(NAME software_render_preview COMMAND render_level_preview
 		"${CMAKE_SOURCE_DIR}/game" "tutorials/levels/forest_01.json"
 		"${CMAKE_BINARY_DIR}/forest_01_preview.png")
+
+	# Platform-neutral CPU frame composer + pad-driven app flow (the path the PS3 layer uses).
+	add_executable(test_frame_composer tests/test_frame_composer.cpp)
+	target_link_libraries(test_frame_composer PRIVATE fbw_software_renderer)
+	add_test(NAME frame_composer_all_levels COMMAND test_frame_composer "${CMAKE_SOURCE_DIR}/game")
+	add_executable(test_app_flow tests/test_app_flow.cpp)
+	target_link_libraries(test_app_flow PRIVATE fbw_software_renderer)
+	add_test(NAME app_flow_pads COMMAND test_app_flow "${CMAKE_SOURCE_DIR}/game" "${CMAKE_BINARY_DIR}/app_flow_save.json")
 endif()
 
 # Optional SDL2 desktop runtime. SDL headers are not required by the portable
